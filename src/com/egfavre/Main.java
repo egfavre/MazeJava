@@ -73,14 +73,15 @@ public class Main {
         }
     }
 
-    static void createMaze (Room[][]rooms, Room room){
+    static boolean createMaze (Room[][]rooms, Room room){
         room.wasVisited = true;
         Room nextRoom = randomNeighbor(rooms, room.row, room.col);
             if (nextRoom == null) {
-                return;
+                return false;
             }
         tearDownWall(room, nextRoom);
-        createMaze(rooms, nextRoom);
+        while (createMaze(rooms, nextRoom));
+        return true;
     }
 
     public static void main(String[] args) {
