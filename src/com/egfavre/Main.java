@@ -1,6 +1,8 @@
 package com.egfavre;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 public class Main {
 
@@ -16,6 +18,30 @@ public class Main {
         return rooms;
     }
 
+    static ArrayList<Room> possibleNeighbors(Room[][] rooms, int row, int col) {
+        ArrayList<Room> neighbors = new ArrayList<>();
+
+        if (row > 0) {
+            neighbors.add(rooms[row - 1][col]);
+        }
+        if (row < SIZE - 1){
+            neighbors.add(rooms[row + 1][col]);
+        }
+        if (col < SIZE - 1) {
+            neighbors.add(rooms[row][col + 1]);
+        }
+        if (col > 0) {
+            neighbors.add(rooms[row][col - 1]);
+        }
+
+        neighbors = neighbors.stream()
+                .filter(room -> !room.wasVisited)
+                .collect(Collectors.toCollection(ArrayList<Room>::new));
+
+        return neighbors;
+        //should return 0-4 room objects
+    }
+
     public static void main(String[] args) {
         Room[][] rooms = createRooms();
         for (Room[] row : rooms){
@@ -25,7 +51,8 @@ public class Main {
         for (Room[] row : rooms){
             System.out.print("|");
             for (Room room : row){
-                System.out.print("_|");
+                System.out.print(room.hasBottom ? "_" : " ");
+                System.out.print(room.hasRight ? "|" : " ");
             }
             System.out.println();
         }
