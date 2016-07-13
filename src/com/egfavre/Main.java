@@ -2,6 +2,7 @@ package com.egfavre;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 public class Main {
@@ -42,8 +43,49 @@ public class Main {
         //should return 0-4 room objects
     }
 
+    static Room randomNeighbor(Room[][] rooms, int row, int col){
+        ArrayList<Room> neighbors = possibleNeighbors(rooms, row, col);
+
+        if (neighbors.size() > 0) {
+            Random r = new Random();
+            int index = r.nextInt(neighbors.size());
+            return neighbors.get(index);
+        }
+        return null;
+    }
+
+    static void tearDownWall(Room oldRoom, Room newRoom){
+        //going up
+        if (newRoom.row < oldRoom.row){
+            newRoom.hasBottom = false;
+        }
+        //going down
+        if (newRoom.row > oldRoom.row){
+            oldRoom.hasBottom = false;
+        }
+        //going right
+        if (newRoom.col > oldRoom.col){
+            oldRoom.hasRight = false;
+        }
+        //going left
+        if (newRoom.col < oldRoom.col) {
+            newRoom.hasRight = false;
+        }
+    }
+
+    static void createMaze (Room[][]rooms, Room room){
+        room.wasVisited = true;
+        Room nextRoom = randomNeighbor(rooms, room.row, room.col);
+            if (nextRoom == null) {
+                return;
+            }
+        tearDownWall(room, nextRoom);
+        createMaze(rooms, nextRoom);
+    }
+
     public static void main(String[] args) {
         Room[][] rooms = createRooms();
+        createMaze(rooms, rooms[0][0]);
         for (Room[] row : rooms){
             System.out.print(" _");
         }
