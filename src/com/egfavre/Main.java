@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 public class Main {
 
     static final int SIZE = 10;
+    static boolean isFirst = true;
 
     static Room[][] createRooms(){
         Room[][] rooms = new Room[SIZE][SIZE];
@@ -71,22 +72,29 @@ public class Main {
         if (newRoom.col < oldRoom.col) {
             newRoom.hasRight = false;
         }
+
     }
 
     static boolean createMaze (Room[][]rooms, Room room){
         room.wasVisited = true;
         Room nextRoom = randomNeighbor(rooms, room.row, room.col);
             if (nextRoom == null) {
+                room.isEnd = true;
                 return false;
             }
+
         tearDownWall(room, nextRoom);
         while (createMaze(rooms, nextRoom));
+
         return true;
     }
 
     public static void main(String[] args) {
+
         Room[][] rooms = createRooms();
-        createMaze(rooms, rooms[0][0]);
+        Room start = rooms[0][0];
+        start.isStart = true;
+        createMaze(rooms, start);
         for (Room[] row : rooms){
             System.out.print(" _");
         }
@@ -94,10 +102,15 @@ public class Main {
         for (Room[] row : rooms){
             System.out.print("|");
             for (Room room : row){
-                System.out.print(room.hasBottom ? "_" : " ");
-                System.out.print(room.hasRight ? "|" : " ");
+                System.out.print(room.hasBottom && !room.isStart ? "_" : " ");
+                System.out.print(room.hasRight && !room.isStart ? "|" : " ");
+                System.out.print(room.isStart ? "o" : "");
+                System.out.print(room.isEnd && isFirst ? "x" : "");
             }
             System.out.println();
+
+
+            isFirst = false;
         }
     }
 }
